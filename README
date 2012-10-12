@@ -1,0 +1,26 @@
+This tool downloads anime episodes sequentially from www.realitylapse.com
+
+file list:
+1. REalityRElapsegui.pyw - Source with tkinter gui
+2. REalityRElapse_x64.7z - windows x64 binary. Unzip and run exe
+3. REalityRElapse_win32.7z- win32 binare. Unzip and run exe
+4. REalityRElapse.py - Command line version
+5. README - this file
+
+
+Requirements:
+1. Free Download Manager available at http://www.freedownloadmanager.org/
+
+
+Usage:
+1.Fill the form. Anime name should be as it appears in www.realitylapse.com use the presets for some pointers
+2.set download directory and make sure that freedownload manager downloads by default to that directory. Set this via free download managers settings.
+3.under advanced settings of free download manager settings new downloads tab, set partial/incomplete downloads to have either extra extension(.incmpl or something) or to have partial dloads hidden(extension method recommended )
+4.Set range of downloads. only integers in these entry boxes. don't add padding 0s
+Thats about it. 
+
+Note: there is very little error detection in this app. So fill the form correctly.
+
+Final Note: realitylapse.com is a great site. But to freely download anime episodes, you cant just queue them up in a download manager. It changes the urls every ~30 mins and if you queue up say 10 episodes for download(after going through the whole repeated clicking,waiting process) you'll find that the links all expired after 3 completed downloads. This script was written to work around that very problem. 
+
+Regarding doubts about the script mail me at dodo.dodder@gmail.com   
