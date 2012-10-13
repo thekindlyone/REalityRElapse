@@ -223,19 +223,26 @@ def main():
     
     donelist=0    
     def callback(flag,donelist): 
+        i=0
         if flag.value==1 and donelist==0:
             frame = Frame(root, bd=2, relief=SUNKEN)
+            m=Label(frame,text='Get ep. no for range field for specific files here' )
+            m.pack()
             scrollbary = Scrollbar(frame)
             scrollbary.pack(side=RIGHT, fill=Y)
             scrollbarx = Scrollbar(frame, orient=HORIZONTAL)
             scrollbarx.pack(side=BOTTOM,fill=X)
             lb=Listbox(frame, bd=0, yscrollcommand=scrollbary.set ,xscrollcommand=scrollbarx.set ,width=35 , height=15)
             lb.pack()
+            lb.insert(END,'ep.no           ep.title')
             scrollbary.config(command=lb.yview)
             scrollbarx.config(command=lb.xview)
+            
             while not qrl.empty(): 
                 urllist.append(qrl.get())
-                lb.insert(END,urllist[-1])
+                l_mess=str(i+1)+'           '+urllist[-1].split('/')[-1]
+                lb.insert(END,l_mess)
+                i=i+1
             
             frame.grid(row=8,column=0)
             fetchbutton.configure(state="normal",text="DOWNLOAD",command=dload)
@@ -282,20 +289,7 @@ def main():
     fdmbutton.pack(side=LEFT)
     bframe.grid(row=9,column=0,columnspan=15)
 
-    #warning=Label(root,text="",fg="RED")
-    #warning.grid(row=8,column=2,columnspan=5)
 
-    #def doSomething():
-        ## check if saving
-        ## if not:
-        ##fun2()
-        ##mess_q.close()
-        ##qrl.close()
-        ##print pactive,p1active
-        #if (pactive.value) : p.terminate()
-        #if (p1active.value) : p1.terminate()
-        #root.destroy()
-    #root.protocol('WM_DELETE_WINDOW', doSomething)
     root.mainloop()
 
     
