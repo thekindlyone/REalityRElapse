@@ -12,25 +12,31 @@ from multiprocessing import *
 ##########################################################################################
 
 
-def fetch_urls(name,flag,ulist,active):
+def fetch_urls(name,flag,ulist,active,q):
     
     active.value=1
     url="http://www.realitylapse.com/videos/"+name+".php"
+    try:
+        ufile = urllib2.urlopen(url)
+    
+        html=ufile.read()
+        pattern="/downloads/default/+"+name+"/"+name+".+?-lq.mp4"
+        result=re.findall(pattern,html)
+        #print result
 
-    ufile = urllib2.urlopen(url)
-    html=ufile.read()
-    pattern="/downloads/default/+"+name+"/"+name+".+?-lq.mp4"
-    result=re.findall(pattern,html)
+        for link in result:
+           ulist.put("http://www.realitylapse.com"+link)
 
-    for link in result:
-       ulist.put("http://www.realitylapse.com"+link)
-
-    flag.value=1
-    active.value=0    
+        flag.value=1
+        active.value=0   
+    except IOError:
+        flag.value=0
+        active.value=0
+        q.put("ERROR accessing "+url)
 
     
 def fetch_download_link(episode,linklist):
-    url=linklist[episode-1]
+    url=linklist[episode]
     ufile = urllib2.urlopen(url)
     html=ufile.read()
     link=re.search('href="(\S+)">The',html)
@@ -57,7 +63,7 @@ def no_hidden_list(path): # function to check whether completed downloaded file 
 	return outlist
 
 
-def realityrelapse(urllist,startep,endep,dpath,paused,q,active,fdm):# work function to be hopefully called from the gui
+def realityrelapse(dlist,dpath,paused,q,active,fdm):# work function to be hopefully called from the gui
     #print dpath
     #print fdm
     fdm=fdm+r'/fdm.exe'
@@ -69,17 +75,18 @@ def realityrelapse(urllist,startep,endep,dpath,paused,q,active,fdm):# work funct
     #str.replace("\\",'/')
     #urllist=fetch_urls(name)
     active.value=1
-    startep=int(startep)
-    endep=int(endep)
+    #startep=int(startep)
+    endep=len(dlist)-1
+    #endep=int(endep)
     downloading =0
-    current_episode=startep
-    filename=urllist[current_episode-1].split('/')[-1:][0] #the reason why python rules. one line gets just the filename from the entire urllist
+    current_episode=0
+    #filename=urllist[current_episode-1].split('/')[-1:][0] #the reason why python rules. one line gets just the filename from the entire urllist
     #print filename
     while current_episode<=endep:
         
         if (not paused.value):
             #print paused.value
-            filename=urllist[current_episode-1].split('/')[-1:][0]
+            filename=dlist[current_episode].split('/')[-1]
             if filename in no_hidden_list(dpath) :
                 #episode done
                 current_episode=current_episode+1
@@ -88,7 +95,7 @@ def realityrelapse(urllist,startep,endep,dpath,paused,q,active,fdm):# work funct
                 downloading=0
             
             if downloading==0 and filename not in no_hidden_list(dpath) :
-                link=fetch_download_link(current_episode,urllist)
+                link=fetch_download_link(current_episode,dlist)
                 command=p+link 
                 os.system(command)
                  
@@ -98,6 +105,7 @@ def realityrelapse(urllist,startep,endep,dpath,paused,q,active,fdm):# work funct
            # q.put("Paused")
            #print paused.value
     active.value=0
+    q.put("Finished")
 
 #############################################################
 
@@ -157,7 +165,7 @@ def main():
     E2 = Entry(root, bd =5,textvariable=directory,justify=CENTER,width=20)
     E2.grid(row=1,column=1,columnspan=3)
     B2 = Button(root, text ="...", command = dir)
-    B2.grid(row=1,column=4)
+    B2.grid(row=1,column=4,columnspan=4)
     
     L3=Label(root,text="Range of episodes(inclusive at both ends)")
     L3.grid(row=2,column=0)
@@ -167,7 +175,9 @@ def main():
     L4.grid(row=2,column=2,sticky=W)
     E4=Entry(root, bd =5,textvariable=endep,justify=CENTER,width=5)
     E4.grid(row=2,column=3,sticky=W)
-    
+    var=IntVar()
+    cb=Checkbutton(root, text="Use Manual Range Input", variable=var)
+    cb.grid(row=2,column=4)
     L6=Label(root,text="PRESETS",anchor=E)
     L6.grid(row=4,column=0)
     
@@ -184,7 +194,7 @@ def main():
     st="normal"
     #parent_conn,child_conn=Pipe()
     def fetch():
-        p = Process(target=fetch_urls,args=(aname.get(),listflag,qrl,pactive))
+        p = Process(target=fetch_urls,args=(aname.get(),listflag,qrl,pactive,mess_q))
         p.daemon = True
         fetchbutton.configure(state="disabled")
         mess_q.put("Fetching links")
@@ -193,10 +203,13 @@ def main():
     def validform():
         
         code=0
-        
-        if len(aname.get())>0 and len(directory.get())>0 and len(startep.get())>0 and len(endep.get())>0 :
-            code=1
-        
+        #print lb.curselection()
+        if var.get()==0:
+            if (len(aname.get())>0 and len(directory.get())>0 and len(lb.curselection())>0)  :
+                code=1
+        if var.get()==1:
+            if(len(aname.get())>0 and len(directory.get())>0 and len(startep.get())>0 and len(endep.get())>0):
+                code=1
         return code
     def dload():
         
@@ -206,7 +219,18 @@ def main():
         if(validform()): 
             #print "valid"
             #warning.configure(text="")
-            p1=Process(target=realityrelapse,args=(urllist,startep.get(),endep.get(),directory.get(),pause,mess_q,p1active,fdmdirectory.get()))
+            dlist=[]
+            if var.get()==0:
+                ilist=lb.curselection()
+                #print ilist
+                for i in ilist:
+                    dlist.append(urllist[int(i)])
+                #print dlist
+            if var.get()==1:
+                for i in range(int(startep.get()),int(endep.get())+1):
+                    dlist.append(urllist[i-1])
+                
+            p1=Process(target=realityrelapse,args=(dlist,directory.get(),pause,mess_q,p1active,fdmdirectory.get()))
             p1.daemon = True
             p1.start()
             fetchbutton.configure(text="Pause",command=pause_download)
@@ -221,22 +245,26 @@ def main():
         mess_q.put("Unpaused")
         #loglabel.configure()
     
-    donelist=0    
+    donelist=0   
+    frame = Frame(root, bd=2, relief=SUNKEN)
+    m=Label(frame,text='Get ep. no for range field or select files here' )
+    am=Label(frame,text='Ep. No           Ep. Title')
+    m.pack()
+    am.pack()
+    scrollbary = Scrollbar(frame)
+    scrollbary.pack(side=RIGHT, fill=Y)
+    scrollbarx = Scrollbar(frame, orient=HORIZONTAL)
+    scrollbarx.pack(side=BOTTOM,fill=X)
+    lb=Listbox(frame, bd=0, yscrollcommand=scrollbary.set ,xscrollcommand=scrollbarx.set ,width=35 , height=15,selectmode=EXTENDED)
+    lb.pack(side=BOTTOM)
+    #lb.insert(END,'ep.no           ep.title')
+    scrollbary.config(command=lb.yview)
+    scrollbarx.config(command=lb.xview) 
+    frame.grid(row=8,column=0)
     def callback(flag,donelist): 
         i=0
         if flag.value==1 and donelist==0:
-            frame = Frame(root, bd=2, relief=SUNKEN)
-            m=Label(frame,text='Get ep. no for range field for specific files here' )
-            m.pack()
-            scrollbary = Scrollbar(frame)
-            scrollbary.pack(side=RIGHT, fill=Y)
-            scrollbarx = Scrollbar(frame, orient=HORIZONTAL)
-            scrollbarx.pack(side=BOTTOM,fill=X)
-            lb=Listbox(frame, bd=0, yscrollcommand=scrollbary.set ,xscrollcommand=scrollbarx.set ,width=35 , height=15)
-            lb.pack()
-            lb.insert(END,'ep.no           ep.title')
-            scrollbary.config(command=lb.yview)
-            scrollbarx.config(command=lb.xview)
+
             
             while not qrl.empty(): 
                 urllist.append(qrl.get())
@@ -244,7 +272,7 @@ def main():
                 lb.insert(END,l_mess)
                 i=i+1
             
-            frame.grid(row=8,column=0)
+            
             fetchbutton.configure(state="normal",text="DOWNLOAD",command=dload)
             donelist=1
         root.after(200,callback,listflag,donelist)
@@ -265,13 +293,23 @@ def main():
     lscrollbarx.config(command=logbox.xview)
     logframe.grid(row=8,column=3,columnspan=4)
 
-    def logging():
+    def logging(var,listflag):
         #if pause.value==0: loglabel.configure(text="MESSAGE LOG (Process Paused)")
         #if pause.value==0: loglabel.configure(text="MESSAGE LOG (Process Running)")
+        #print var.value
+        if var.get()==1 and listflag.value==1 :
+            lb.configure(state=DISABLED)
+            E3.configure(state=NORMAL)
+            E4.configure(state=NORMAL)
+            #mess_q.put("ENt")
+        if var.get()==0 and listflag.value==1:
+            lb.configure(state=NORMAL)
+            E3.configure(state=DISABLED)
+            E4.configure(state=DISABLED)
         if not mess_q.empty():
             logbox.insert(END,mess_q.get())
-        root.after(200,logging)    
-    root.after(200,logging)
+        root.after(200,logging,var,listflag)    
+    root.after(200,logging,var,listflag)
     def askdir():
         diname = tkFileDialog.askdirectory(parent=root,initialdir="/",title='Please select a directory')
         if (len(diname)>0) :    
