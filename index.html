@@ -1,44 +1,34 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
     <title>Realityrelapse by thekindlyone</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/respond.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <!--[if lt IE 8]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
-    <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
   </head>
+
   <body>
-      <div id="header">
-        <nav>
-          <li class="fork"><a href="https://github.com/thekindlyone/REalityRElapse">View On GitHub</a></li>
-          <li class="downloads"><a href="https://github.com/thekindlyone/REalityRElapse/zipball/master">ZIP</a></li>
-          <li class="downloads"><a href="https://github.com/thekindlyone/REalityRElapse/tarball/master">TAR</a></li>
-          <li class="title">DOWNLOADS</li>
-        </nav>
-      </div><!-- end header -->
 
-    <div class="wrapper">
+    <header>
+      <div class="container">
+        <h1>Realityrelapse</h1>
+        <h2>Anime downloader</h2>
 
-      <section>
-        <div id="title">
-          <h1>Realityrelapse</h1>
-          <p>Anime downloader</p>
-          <hr>
-          <span class="credits left">Project maintained by <a href="https://github.com/thekindlyone">thekindlyone</a></span>
-          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
-        </div>
+        <section id="downloads">
+          <a href="https://github.com/thekindlyone/REalityRElapse/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/thekindlyone/REalityRElapse/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/thekindlyone/REalityRElapse" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
 
-        <p><img src="http://i739.photobucket.com/albums/xx38/dodo_dodder/screenlapse.png" alt="screenshot"></p>
+    <div class="container">
+      <section id="main_content">
+        <p><img src="http://i739.photobucket.com/albums/xx38/dodo_dodder/screenlapse-1.png" alt="screenshot"></p>
 
 <hr><p>This tool downloads anime episodes sequentially from <a href="http://www.realitylapse.com">www.realitylapse.com</a></p>
 
@@ -60,7 +50,7 @@
 
 <p>3.under advanced settings of free download manager settings new downloads tab, set partial/incomplete downloads to have either extra extension(.incmpl or something) or to have partial dloads hidden(extension method recommended )</p>
 
-<p>4.Set range of downloads. only integers in these entry boxes. don't add padding 0s</p>
+<p>4.Set range of downloads. only integers in these entry boxes. don't add padding 0s. Or use the list to select episodes to download. use checkbutton to switch between modes. for range, check the list of episode numbers to be entered for desired episodes. Because of realitylapse's file naming conventions and occassional double episodes, the episode numbers to be entered can vary from the episode number in the title.</p>
 
 <p>Thats about it. </p>
 
@@ -70,9 +60,8 @@
 
 <p>Regarding doubts about the script mail me at <a href="mailto:dodo.dodder@gmail.com">dodo.dodder@gmail.com</a>   </p>
       </section>
-
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
     
   </body>
 </html>
