@@ -16,7 +16,7 @@ Usage:
 1.Fill the form. Anime name should be as it appears in www.realitylapse.com use the presets for some pointers
 2.set download directory and make sure that freedownload manager downloads by default to that directory. Set this via free download managers settings.
 3.under advanced settings of free download manager settings new downloads tab, set partial/incomplete downloads to have either extra extension(.incmpl or something) or to have partial dloads hidden(extension method recommended )
-4.Set range of downloads. only integers in these entry boxes. don't add padding 0s. Because of certain discrepencies in the naming convention used by realitylapse the episode numbers from the program deviate from the numbers in their titles. Therefore, if specific files are to be downloaded , press the fetch button and then get the ep.numbers from the list and then feed them to the range entryboxes.  
+4.Set range of downloads. only integers in these entry boxes. don't add padding 0s. Because of certain discrepencies in the naming convention used by realitylapse the episode numbers from the program deviate from the numbers in their titles. Therefore, if specific files are to be downloaded, use the list of files generated upon pressing fetch. ctrl,shift modifiers work.  
 Thats about it. 
 
 Note: there is very little error detection in this app. So fill the form correctly.
