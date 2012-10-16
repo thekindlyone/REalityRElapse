@@ -24,7 +24,7 @@ import os
 import ctypes
 from functools import partial
 from multiprocessing import *
-
+import webbrowser
 
 ##########################################################################################
 
@@ -343,6 +343,38 @@ def main():
     fdmentry.pack(side=LEFT)
     fdmbutton.pack(side=LEFT)
     bframe.grid(row=9,column=0,columnspan=15)
+    def aboutbox():
+        about=Toplevel()
+        about.title("About REalityRElapse")
+        str= """   REalityRElapse  A sequential anime downloader
+    Copyright (C) 2012  Aritra Das
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    
+    Author Name: Aritra Das    Email:dodo.dodder@gmail.com"""
+ 
+        msg=Message(about,text=str)
+        msg.pack()
+        def openhelp():
+	        link='http://sourceforge.net/projects/realityrelapse/files/'
+	        webbrowser.open_new(link)
+	
+        hb=Button(about,text="USAGE INSTRUCTIONS",command=openhelp)
+        hb.pack()
+        
+    aboutbutton=Button(root,text="Help/About",command=aboutbox)
+    aboutbutton.grid(row=100,column=4)
 
 
     root.mainloop()
